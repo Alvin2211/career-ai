@@ -16,9 +16,9 @@ const CareerResults = ({ data }) => {
         {data.map((career, i) => (
           <div
             key={i}
-            className="bg-black/50 backdrop-blur-md rounded-xl p-6 shadow-md  shadow-[#6e3fea] hover:scale-105 transition-transform duration-500"
+            className="bg-black/50 backdrop-blur-md rounded-xl p-6 shadow-md  shadow-[#7c7cff] hover:scale-105 transition-transform duration-500"
           >
-            <h3 className="text-xl font-bold text-[#6e3fea] ">
+            <h3 className="text-xl font-bold text-[#7c7cff] ">
               {career.career_title} ({career.designation})
             </h3>
 
@@ -28,12 +28,12 @@ const CareerResults = ({ data }) => {
 
             {career.required_skills?.length > 0 && (
               <div className="mt-3">
-                <h4 className="font-semibold text-[#6e3fea]">Required Skills:</h4>
+                <h4 className="font-semibold text-[#7c7cff]">Required Skills:</h4>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {career.required_skills.map((skill, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-2 text-xs font-medium bg-white text-[#6e3fea] rounded-full "
+                      className="px-3 py-2 text-xs font-medium bg-white text-[#7c7cff] rounded-full "
                     >
                       {skill}
                     </span>
@@ -43,7 +43,7 @@ const CareerResults = ({ data }) => {
             )}
 
             {career.global_demand && (
-              <p className="mt-3 text-sm text-[#6e3fea] italic">
+              <p className="mt-3 text-sm text-[#7c7cff] italic">
                 <strong >Global Demand:</strong> <span className="text-neutral-200">{career.global_demand}</span>
               </p>
             )}
@@ -51,27 +51,22 @@ const CareerResults = ({ data }) => {
 
             {career.related_jobs?.length > 0 && (
               <div className="mt-2">
-                <h4 className="font-semibold text-[#6e3fea]">Related Jobs:</h4>
+                <h4 className="font-semibold text-[#7c7cff]">Related Jobs:</h4>
                 <div className="flex flex-wrap gap-2 mt-1">
                     {career.related_jobs.map((job, idx) => (
                       <span
                       key={idx}
-                      className="px-3 py-2 text-xs font-medium bg-white text-[#6e3fea] rounded-full "
+                      className="px-3 py-2 text-xs font-medium bg-white text-[#7c7cff] rounded-full "
                     >{job}</span>
                     ))}
                 </div>
-                {/* <ul className="text-sm text-neutral-200 list-disc list-inside">
-                  {career.related_jobs.map((job, idx) => (
-                    <li key={idx}>{job}</li>
-                  ))}
-                </ul> */}
               </div>
             )}
           </div>
         ))}
       </div>
 
-        <button className=" mt-10 px-5 py-3 bg-[#6e3fea]  text-white font-semibold rounded-full shadow-md  shadow-indigo-500/50 hover:scale-105 transition-transform duration-200"
+        <button className=" mt-10 px-5 py-3 bg-[#7c7cff]  text-white font-semibold rounded-full shadow-md  shadow-indigo-500/50 hover:scale-105 transition-transform duration-200"
                           onClick={() => navigate('/')} >
                         Try Another Resume
         </button>

@@ -68,11 +68,11 @@ const Homepage = () => {
             <Navbar />
 
             <section className="relative  min-h-screen  overflow-hidden justify  ">
-                <div className=" absolute inset-0  bg-[#121313]" />
+                <div className=" absolute inset-0  bg-[#0e0f11]" />
                 <div className="container relative z-10 ">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 text-center mt-10 text-white">
                         Ready to Elevate Your{" "}
-                        <span className="text-[#6e3fea] ]">
+                        <span className="text-[#7c7cff] ]">
                             Career ?
                         </span>
 
@@ -87,7 +87,7 @@ const Homepage = () => {
                         {!careerResults && !loading && (
                             <div className=" m-5 lg:w-[50vw] md:w-[70vw] flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 
                                             rounded-xl p-10 cursor-pointer bg-neutral-300 hover:bg-neutral-200 transition-colors hover:scale-105 transition-transform duration-500">
-                                <Upload size={55} className="text-[#6e3fea]" />
+                                <Upload size={55} className="text-[#7c7cff]" />
 
                                 <p className="text-lg font-medium text-gray-800 mb-2">
                                     Upload Your Resume

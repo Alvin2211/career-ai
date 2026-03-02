@@ -11,20 +11,20 @@ const Navbar = () => {
   const navigate= useNavigate();
   useEffect(() => {
     if (isSignedIn) {
-      navigate('/profile');
+      navigate('/home');
     } 
   }, [isSignedIn, navigate]);
 
 
   return (
-  <header className="sticky top-0 z-50 bg-[#121313] backdrop-blur-md border-b border-white/10">
+  <header className="sticky top-0 z-50 bg-[#0e0f11] backdrop-blur-md border-b border-white/10">
     <div className="max-w-7xl mx-auto px-4">
 
       <div className="flex items-center justify-between h-16">
 
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md">
-            <Brain className="text-[#7c7cff] h-6 w-6  " />
+            <Brain className="text-[#7c7cff] h-6 w-6 " />
           </div>
           <span className="text-lg font-semibold tracking-wide text-white">
             Career<span className="text-[#7c7cff] text-xl">AI</span>
@@ -32,7 +32,7 @@ const Navbar = () => {
         </div>
 
         <nav className="hidden md:flex gap-10 text-sm text-neutral-400">
-          {["Home", "Profile", "Careers", "AI Chat"].map((item) => (
+          {["Home", "Profile Builder", "Career Recommender", "AI Chat"].map((item) => (
             <a
               key={item}
               href="#"
