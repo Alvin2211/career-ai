@@ -67,7 +67,7 @@ const CareerResults = ({ data }) => {
       </div>
 
         <button className=" mt-10 px-5 py-3 bg-[#7c7cff]  text-white font-semibold rounded-full shadow-md  shadow-indigo-500/50 hover:scale-105 transition-transform duration-200"
-                          onClick={() => navigate('/')} >
+                          onClick={() => navigate('/careerrecommend')} >
                         Try Another Resume
         </button>
     </div>
