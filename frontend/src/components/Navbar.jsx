@@ -13,7 +13,7 @@ const Navbar = () => {
   const navItems = [
     { label: 'Career Recommender', path: '/careerrecommend' },
     { label: 'ResumeForge', path: '/builder' },
-    { label: 'AI Chat', path: '/chat' },
+    { label: 'Courses', path: '/courses' },
   ];
 
   const handleNavClick = (path) => {

@@ -19,7 +19,9 @@ def home():
 
 from app.routes.resume_route import router as resume_router
 
-app.include_router(resume_router)
+from app.routes.courses_route import router as courses_router
 
+app.include_router(resume_router)
+app.include_router(courses_router)
 
     

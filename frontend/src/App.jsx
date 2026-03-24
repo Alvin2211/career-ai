@@ -5,6 +5,7 @@ import Homepage from './pages/Homepage.jsx'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResumeBuilder from './pages/ResumeBuilder.jsx';
 import ProtectedRoute from './middlewares/ProtectedRoutes.jsx';
+import Courses from './pages/Courses.jsx';
 function App() {
   
   
@@ -27,6 +28,14 @@ function App() {
       element={
         <ProtectedRoute>
           <ResumeBuilder />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/courses"
+      element={
+        <ProtectedRoute>
+          <Courses />
         </ProtectedRoute>
       }
     />

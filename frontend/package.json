@@ -13,6 +13,7 @@
     "@clerk/clerk-react": "^5.53.3",
     "@clerk/themes": "^2.4.51",
     "@tailwindcss/vite": "^4.2.2",
+    "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.545.0",

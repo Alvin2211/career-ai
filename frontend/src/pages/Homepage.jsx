@@ -85,8 +85,8 @@ const Homepage = () => {
         <>
             <Navbar />
 
-            <section className="relative  min-h-screen  overflow-hidden justify  ">
-                <div className=" absolute inset-0  bg-[#0e0f11]" />
+            <section className="relative  min-h-screen  overflow-hidden justify bg-[#0e0f11]  ">
+                <div className=" absolute inset-0 " />
                 <div className="container relative z-10 ">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 text-center mt-10 text-white">
                         Ready to Elevate Your{" "}

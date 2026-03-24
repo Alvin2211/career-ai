@@ -21,4 +21,8 @@ import resumeRoutes from './routes/resume.route.js'
 
 app.use('/api',resumeRoutes);
 
+import courseRoutes from './routes/course.route.js';
+
+app.use('/api',courseRoutes);
+
 export { app };

@@ -168,6 +168,10 @@ ${data.projects.map(proj => `
 }
 const genresume = async (req, res) => {
     try {
+      const userId = req.auth?.userId;
+      if (!userId) {
+        throw new ApiError(400, "Not authenticated");
+      }
         const userData = req.body;
         if (!userData) {
             throw new ApiError(400, "No data provided");

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LoaderOne } from "@/components/ui/loader";
 const STEPS = ["Personal", "Experience", "Education", "Projects", "Skills"];
 import { useNavigate } from "react-router-dom";
+import { useAuth} from "@clerk/clerk-react";
 
 const defaultExperience = () => ({
   id: Date.now(),
@@ -32,6 +33,8 @@ export default function Builder() {
   const [isResult, setIsResult] = useState(null);
   const [pdfurl, setPdfUrl] = useState(null);
   const navigate = useNavigate();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
+  
 
   const set = (field, value) => setData(d => ({ ...d, [field]: value }));
 
@@ -79,12 +82,24 @@ export default function Builder() {
   const progress = (step / (STEPS.length - 1)) * 100;
 
   const handleSubmitClick = async () => {
+    if (!isLoaded || !isSignedIn) {
+            alert("User not authenticated");
+            return;
+        }
+
+        const token = await getToken();
+        if (!token) {
+            alert("Token not found");
+            return;
+        }
     try {
       setLoading(true);
-      console.log("Submitting data:", data);
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/generateresume`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(data),
       });
 
@@ -106,7 +121,8 @@ export default function Builder() {
       
 
     } catch (error) {
-
+      console.error("Error generating resume PDF:", error);
+      
     }
   };
   const handleDownload = () => {

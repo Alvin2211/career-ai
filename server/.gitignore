@@ -116,4 +116,12 @@ Thumbs.db
 # ---------------------------------------
 server/app/__pycache__/
 server/app/utils/__pycache__/
+server/app/core/__pycache__/
+server/app/controllers/__pycache__/
+server/app/services/__pycache__/
+server/app/routes/__pycache__/
+
+
+**/__pycache__/
+chroma_db/
 
