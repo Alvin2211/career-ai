@@ -1,6 +1,5 @@
 import Landingpage from './pages/Landingpage.jsx'
 import Homepage from './pages/Homepage.jsx'
-import ResumeBuilder from './pages/ResumeBuilder.jsx';
 import Courses from './pages/Courses.jsx';
 import Roadmap from './pages/Roadmap.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -21,15 +20,7 @@ function App() {
         </ProtectedRoute>
       }
     />
-
-    <Route
-      path="/builder"
-      element={
-        <ProtectedRoute>
-          <ResumeBuilder />
-        </ProtectedRoute>
-      }
-    />
+    
     <Route
       path="/courses"
       element={

@@ -21,9 +21,11 @@ from app.routes.resume_route import router as resume_router
 
 from app.routes.courses_route import router as courses_router
 from app.routes.roadmap_route import router as roadmap_router
+from app.routes.interview_route import router as interview_router
 
 app.include_router(resume_router)
 app.include_router(courses_router)
 app.include_router(roadmap_router)
+app.include_router(interview_router)
 
     

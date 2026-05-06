@@ -1,5 +1,3 @@
-from sqlalchemy import null
-
 from app.core.chroma_config import get_model, get_client
 
 model= get_model()

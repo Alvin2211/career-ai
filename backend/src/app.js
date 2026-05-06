@@ -16,7 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
-// abhi routes banane rehte hai idhar
 import resumeRoutes from './routes/resume.route.js'
 
 app.use('/api',resumeRoutes);
@@ -28,5 +27,9 @@ app.use('/api',courseRoutes);
 import roadmapRoutes from './routes/roadmap.route.js';
 
 app.use('/api',roadmapRoutes);
+
+import interviewRoutes from './routes/interview.route.js';
+
+app.use('/api',interviewRoutes);
 
 export { app };

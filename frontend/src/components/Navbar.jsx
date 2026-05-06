@@ -12,9 +12,9 @@ const Navbar = () => {
 
   const navItems = [
     { label: 'Career Recommender', path: '/careerrecommend' },
-    { label: 'ResumeForge', path: '/builder' },
     { label: 'Courses', path: '/courses' },
     { label: 'Roadmap Generator', path: '/roadmap' },
+    { label: 'Mock Interviewer', path: '/interview' }
   ];
 
   const handleNavClick = (path) => {
