@@ -1,4 +1,3 @@
-import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import { Sparkles } from "lucide-react";
 import img1 from "../images/img1.jpg";
 

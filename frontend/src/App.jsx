@@ -2,6 +2,7 @@ import Landingpage from './pages/Landingpage.jsx'
 import Homepage from './pages/Homepage.jsx'
 import Courses from './pages/Courses.jsx';
 import Roadmap from './pages/Roadmap.jsx';
+import Interview from './pages/Interview.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './middlewares/ProtectedRoutes.jsx';
 function App() {
@@ -34,6 +35,14 @@ function App() {
       element={
         <ProtectedRoute>
           <Roadmap />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/interview"
+      element={
+        <ProtectedRoute>
+          <Interview />
         </ProtectedRoute>
       }
     />
