@@ -1,184 +1,290 @@
 import axios from "axios";
+
 import interviewModel from "../models/interview.model.js";
+
 import { ApiError } from "../utils/ApiError.js";
 
 const TOTAL_QUESTIONS = 5;
 
 export const startInterview = async (req, res) => {
+
     try {
-        console.log("Starting interview with data:", req.body);
+
         const userId = "test-user";
-        const { jobRole, difficulty, interviewType } = req.body;
 
-        if (!userId || !jobRole || !difficulty || !interviewType) {
-            throw new ApiError(400, "userId, jobRole, difficulty and interviewType are required");
-        }
-
-        const response = await axios.post(`${process.env.PYTHON_SERVICE_URL}/generate-question`, {
-            job_role: jobRole,
-            difficulty: difficulty,
-            interview_type: interviewType,
-            previous_questions: [],
-        });
-
-        const intSession = new interviewModel({
-            userId,
+        const {
             jobRole,
             difficulty,
             interviewType,
+        } = req.body;
+
+        if (
+            !jobRole ||
+            !difficulty ||
+            !interviewType
+        ) {
+            throw new ApiError(
+                400,
+                "Missing required fields"
+            );
+        }
+
+        const { data } = await axios.post(
+            `${process.env.PYTHON_SERVICE_URL}/generate-interview`,
+            {
+                job_role: jobRole,
+                difficulty,
+                interview_type: interviewType,
+                total_questions: TOTAL_QUESTIONS,
+            }
+        );
+
+        const session = await interviewModel.create({
+
+            userId,
+
+            jobRole,
+
+            difficulty,
+
+            interviewType,
+
             totalQuestions: TOTAL_QUESTIONS,
-            questions: [response.data.question],
+
+            questions: data.questions,
+
             answers: [],
-            feedbacks: [],
-            scores: [],
+
+            evaluations: [],
+
             status: "ongoing",
         });
 
-        await intSession.save();
-
         return res.status(201).json({
-            sessionId: intSession._id,
-            question: response.data.question,
-            questionNumber: 1,
+
+            sessionId: session._id,
+
             totalQuestions: TOTAL_QUESTIONS,
+
+            questions: session.questions.map(q => ({
+                question: q.question,
+            })),
         });
 
     } catch (error) {
-        console.error("Error starting interview:", error);
-        res.status(500).json({ message: "Failed to start interview" });
+
+        console.error(
+            "startInterview error:",
+            error.message
+        );
+
+        return res.status(500).json({
+            message: "Failed to start interview"
+        });
     }
 };
 
+
 export const submitAnswer = async (req, res) => {
+
     try {
-        const { sessionId, answer } = req.body;
 
-        if (!sessionId || !answer) {
-            throw new ApiError(400, "sessionId and answer are required");
+        const {
+            sessionId,
+            question,
+            answer,
+        } = req.body;
+
+        if (
+            !sessionId ||
+            !question ||
+            !answer
+        ) {
+            throw new ApiError(
+                400,
+                "Missing required fields"
+            );
         }
-        
-        const session = await interviewModel.findById(sessionId);
-        if (!session) throw new ApiError(404, "Session not found");
-        if (session.status === "completed") throw new ApiError(400, "Interview already completed");
 
-        const currentQuestionIndex = session.answers.length;
-        const currentQuestion = session.questions[currentQuestionIndex];
+        const session =
+            await interviewModel.findById(sessionId);
 
-        const { data: evalData } = await axios.post(`${process.env.PYTHON_SERVICE_URL}/evaluate-answer`, {
-            job_role: session.jobRole,
-            difficulty: session.difficulty,
-            question: currentQuestion,
+        if (!session) {
+            throw new ApiError(
+                404,
+                "Session not found"
+            );
+        }
+
+        if (session.status === "completed") {
+            throw new ApiError(
+                400,
+                "Interview already completed"
+            );
+        }
+
+        session.answers.push({
+            question,
             answer,
         });
 
-        session.answers.push(answer);
-        session.feedbacks.push(evalData.feedback);
-        session.scores.push(evalData.score);
+        await session.save();
 
-        const isLastQuestion = session.answers.length === session.totalQuestions;
+        return res.json({
+            success: true,
+            answersCount: session.answers.length,
+        });
 
-        if (isLastQuestion) {
-            const { data: reportData } = await axios.post(`${process.env.PYTHON_SERVICE_URL}/generate-report`, {
-                job_role: session.jobRole,
-                difficulty: session.difficulty,
-                interview_type: session.interviewType,
-                questions: session.questions,
-                answers: session.answers,
-                feedbacks: session.feedbacks,
-                scores: session.scores,
-            });
+    } catch (error) {
 
-            session.report = {
-                overallScore: reportData.overall_score,
-                strengths: reportData.strengths,
-                weaknesses: reportData.weaknesses,
-                suggestions: reportData.suggestions,
-                summary: reportData.summary,
-            };
-            session.status = "completed";
-            await session.save();
+        console.error(
+            "submitAnswer error:",
+            error.message
+        );
 
-            return res.json({
-                done: true,
-                feedback: evalData.feedback,
-                score: evalData.score,
-                report: session.report,
-            });
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+};
 
-        } else {
-            const { data: nextQuestionData } = await axios.post(`${process.env.PYTHON_SERVICE_URL}/generate-question`, {
-                job_role: session.jobRole,
-                difficulty: session.difficulty,
-                interview_type: session.interviewType,
-                previous_questions: session.questions,
-            });
 
-            session.questions.push(nextQuestionData.question);
-            await session.save();
+export const finishInterview = async (req, res) => {
 
-            return res.json({
-                done: false,
-                feedback: evalData.feedback,
-                score: evalData.score,
-                nextQuestion: nextQuestionData.question,
-                questionNumber: session.questions.length,
-            });
+    try {
+
+        const { sessionId } = req.body;
+
+        if (!sessionId) {
+            throw new ApiError(
+                400,
+                "sessionId required"
+            );
         }
 
-    } catch (err) {
-        console.error("submitAnswer error:", err.message);
-        return res.status(500).json({ message: err.message });
+        const session =
+            await interviewModel.findById(sessionId);
+
+        if (!session) {
+            throw new ApiError(
+                404,
+                "Session not found"
+            );
+        }
+
+        const { data } = await axios.post(
+            `${process.env.PYTHON_SERVICE_URL}/evaluate-interview`,
+            {
+                job_role: session.jobRole,
+                difficulty: session.difficulty,
+                interview_type: session.interviewType,
+                qa_pairs: session.answers,
+            }
+        );
+
+        session.evaluations =
+            data.evaluations;
+
+        session.report = {
+            overallScore: data.overall_score,
+            strengths: data.strengths,
+            weaknesses: data.weaknesses,
+            suggestions: data.suggestions,
+            summary: data.summary,
+        };
+
+        session.status = "completed";
+
+        await session.save();
+
+        return res.json({
+
+            success: true,
+
+            report: session.report,
+
+            evaluations: session.evaluations,
+        });
+
+    } catch (error) {
+
+        console.error(
+            "finishInterview error:",
+            error.message
+        );
+
+        return res.status(500).json({
+            message: error.message
+        });
     }
 };
 
 
 export const getHistory = async (req, res) => {
-    try {
-        const userId = "test-user";
-        const sessions = await interviewModel.find(
-            { userId, status: "completed" },
-            { jobRole: 1, difficulty: 1, interviewType: 1, "report.overallScore": 1, createdAt: 1 }
-        ).sort({ createdAt: -1 });
 
-        return res.json(
-            sessions.map((s) => ({
-                sessionId: s._id,
-                jobRole: s.jobRole,
-                difficulty: s.difficulty,
-                interviewType: s.interviewType,
-                overallScore: s.report?.overallScore,
-                createdAt: s.createdAt,
-            }))
+    try {
+
+        const userId = "test-user";
+
+        const sessions =
+            await interviewModel.find(
+                {
+                    userId,
+                    status: "completed",
+                },
+                {
+                    jobRole: 1,
+                    difficulty: 1,
+                    interviewType: 1,
+                    report: 1,
+                    createdAt: 1,
+                }
+            ).sort({
+                createdAt: -1,
+            });
+
+        return res.json(sessions);
+
+    } catch (error) {
+
+        console.error(
+            "getHistory error:",
+            error.message
         );
 
-    } catch (err) {
-        console.error("getHistory error:", err.message);
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({
+            message: error.message
+        });
     }
 };
 
 
 export const getReport = async (req, res) => {
+
     try {
-        const session = await interviewModel.findById(req.params.sessionId);
-        if (!session) return res.status(404).json({ message: "Session not found" });
 
-        return res.json({
-            sessionId: session._id,
-            jobRole: session.jobRole,
-            difficulty: session.difficulty,
-            interviewType: session.interviewType,
-            questions: session.questions,
-            answers: session.answers,
-            feedbacks: session.feedbacks,
-            scores: session.scores,
-            report: session.report,
-            createdAt: session.createdAt,
+        const session =
+            await interviewModel.findById(
+                req.params.sessionId
+            );
+
+        if (!session) {
+            return res.status(404).json({
+                message: "Session not found"
+            });
+        }
+
+        return res.json(session);
+
+    } catch (error) {
+
+        console.error(
+            "getReport error:",
+            error.message
+        );
+
+        return res.status(500).json({
+            message: error.message
         });
-
-    } catch (err) {
-        console.error("getReport error:", err.message);
-        return res.status(500).json({ message: err.message });
     }
 };
-

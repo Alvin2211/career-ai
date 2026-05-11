@@ -1,43 +1,45 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional
+from pydantic import BaseModel
+from typing import List
 
 
-
-class GenerateQuestionRequest(BaseModel):
-    job_role: str = Field(..., example="Frontend Developer")
-    difficulty: str = Field(..., example="mid")       
-    interview_type: str = Field(..., example="technical")  
-    previous_questions: Optional[List[str]] = Field(default=[], example=[])
-
-
-class GenerateQuestionResponse(BaseModel):
+class InterviewQuestion(BaseModel):
     question: str
+    expected_answer: str
+    rubric: str
 
 
-class EvaluateAnswerRequest(BaseModel):
-    job_role: str = Field(..., example="Frontend Developer")
-    difficulty: str = Field(..., example="mid")
-    question: str = Field(..., example="What is the virtual DOM?")
-    answer: str = Field(..., example="Virtual DOM is a lightweight copy of the real DOM...")
-
-
-class EvaluateAnswerResponse(BaseModel):
-    feedback: str
-    score: int = Field(..., ge=1, le=10)  
-
-
-class GenerateReportRequest(BaseModel):
+class GenerateInterviewRequest(BaseModel):
     job_role: str
     difficulty: str
     interview_type: str
-    questions: List[str]
-    answers: List[str]
-    feedbacks: List[str]
-    scores: List[int]
+    total_questions: int = 5
 
 
-class GenerateReportResponse(BaseModel):
+class GenerateInterviewResponse(BaseModel):
+    questions: List[InterviewQuestion]
+
+
+class CandidateAnswer(BaseModel):
+    question: str
+    answer: str
+
+
+class EvaluateInterviewRequest(BaseModel):
+    job_role: str
+    difficulty: str
+    interview_type: str
+    qa_pairs: List[CandidateAnswer]
+
+
+class QuestionEvaluation(BaseModel):
+    question: str
+    score: int
+    feedback: str
+
+
+class EvaluateInterviewResponse(BaseModel):
     overall_score: float
+    evaluations: List[QuestionEvaluation]
     strengths: List[str]
     weaknesses: List[str]
     suggestions: List[str]

@@ -1,22 +1,25 @@
 from fastapi import APIRouter
-from app.schemas.interview import GenerateQuestionRequest, GenerateQuestionResponse,EvaluateAnswerRequest, EvaluateAnswerResponse,GenerateReportRequest, GenerateReportResponse
-from app.controllers.interview_controller import handle_generate_question, handle_evaluate_answer, handle_generate_report
+from app.schemas.interview import (GenerateInterviewRequest, GenerateInterviewResponse, EvaluateInterviewRequest, EvaluateInterviewResponse)
+from app.controllers.interview_controller import (handle_generate_interview, handle_evaluate_interview)
 
-router=APIRouter(
+router = APIRouter(
     prefix="/api1",
-    tags=["Mock Interviewer"]
+    tags=["Mock Interview"]
 )
 
-@router.post("/generate-question", response_model=GenerateQuestionResponse)
-def generate_question(req: GenerateQuestionRequest):
-    return handle_generate_question(req)
- 
- 
-@router.post("/evaluate-answer", response_model=EvaluateAnswerResponse)
-def evaluate_answer(req: EvaluateAnswerRequest):
-    return handle_evaluate_answer(req)
- 
- 
-@router.post("/generate-report", response_model=GenerateReportResponse)
-def generate_report(req: GenerateReportRequest):
-    return handle_generate_report(req)
+@router.post(
+    "/generate-interview",
+    response_model=GenerateInterviewResponse
+)
+def generate_interview(req: GenerateInterviewRequest):
+
+    return handle_generate_interview(req)
+
+
+@router.post(
+    "/evaluate-interview",
+    response_model=EvaluateInterviewResponse
+)
+def evaluate_interview(req: EvaluateInterviewRequest):
+
+    return handle_evaluate_interview(req)
