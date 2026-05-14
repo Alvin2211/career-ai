@@ -1,290 +1,120 @@
 import axios from "axios";
-
-import interviewModel from "../models/interview.model.js";
-
-import { ApiError } from "../utils/ApiError.js";
-
+import Interview from "../models/interview.model.js";
+import {ApiError} from "../utils/ApiError.js";
 const TOTAL_QUESTIONS = 5;
 
 export const startInterview = async (req, res) => {
-
     try {
+        const { jobRole, difficulty, interviewType } = req.body;
 
-        const userId = "test-user";
-
-        const {
-            jobRole,
-            difficulty,
-            interviewType,
-        } = req.body;
-
-        if (
-            !jobRole ||
-            !difficulty ||
-            !interviewType
-        ) {
-            throw new ApiError(
-                400,
-                "Missing required fields"
-            );
+        if (!jobRole || !difficulty || !interviewType) {
+            throw new ApiError(400, "jobRole, difficulty, and interviewType are required");
         }
-
+        
         const { data } = await axios.post(
-            `${process.env.PYTHON_SERVICE_URL}/generate-interview`,
+            `${process.env.PYTHON_SERVICE_URL}/generate-questions`,
             {
                 job_role: jobRole,
-                difficulty,
+                difficulty: difficulty,
                 interview_type: interviewType,
                 total_questions: TOTAL_QUESTIONS,
             }
         );
 
-        const session = await interviewModel.create({
-
-            userId,
-
+        
+        const interview = await Interview.create({
+            userId: "test-user", 
             jobRole,
-
             difficulty,
-
             interviewType,
-
-            totalQuestions: TOTAL_QUESTIONS,
-
-            questions: data.questions,
-
+            questions: data.questions, 
             answers: [],
-
-            evaluations: [],
-
             status: "ongoing",
         });
 
         return res.status(201).json({
-
-            sessionId: session._id,
-
-            totalQuestions: TOTAL_QUESTIONS,
-
-            questions: session.questions.map(q => ({
-                question: q.question,
-            })),
+            sessionId: interview._id,
+            questions: interview.questions, 
         });
 
     } catch (error) {
-
-        console.error(
-            "startInterview error:",
-            error.message
-        );
-
-        return res.status(500).json({
-            message: "Failed to start interview"
-        });
+        console.error("startInterview error:", error.message);
+        throw new ApiError(500, "Failed to start interview");
     }
 };
-
-
-export const submitAnswer = async (req, res) => {
-
-    try {
-
-        const {
-            sessionId,
-            question,
-            answer,
-        } = req.body;
-
-        if (
-            !sessionId ||
-            !question ||
-            !answer
-        ) {
-            throw new ApiError(
-                400,
-                "Missing required fields"
-            );
-        }
-
-        const session =
-            await interviewModel.findById(sessionId);
-
-        if (!session) {
-            throw new ApiError(
-                404,
-                "Session not found"
-            );
-        }
-
-        if (session.status === "completed") {
-            throw new ApiError(
-                400,
-                "Interview already completed"
-            );
-        }
-
-        session.answers.push({
-            question,
-            answer,
-        });
-
-        await session.save();
-
-        return res.json({
-            success: true,
-            answersCount: session.answers.length,
-        });
-
-    } catch (error) {
-
-        console.error(
-            "submitAnswer error:",
-            error.message
-        );
-
-        return res.status(500).json({
-            message: error.message
-        });
-    }
-};
-
 
 export const finishInterview = async (req, res) => {
-
     try {
+        const { sessionId, answers } = req.body;
 
-        const { sessionId } = req.body;
-
-        if (!sessionId) {
-            throw new ApiError(
-                400,
-                "sessionId required"
-            );
+        if (!sessionId || !answers || answers.length === 0) {
+            throw new ApiError(400, "sessionId and answers array are required");
         }
 
-        const session =
-            await interviewModel.findById(sessionId);
+        const interview = await Interview.findById(sessionId);
 
-        if (!session) {
-            throw new ApiError(
-                404,
-                "Session not found"
-            );
+        if (!interview) {
+            throw new ApiError(404, "Interview session not found");
         }
+
+        if (interview.status === "completed") {
+            throw new ApiError(400, "This interview is already completed");
+        }
+
+        interview.answers = answers;
+        await interview.save();
 
         const { data } = await axios.post(
-            `${process.env.PYTHON_SERVICE_URL}/evaluate-interview`,
+            `${process.env.PYTHON_SERVICE_URL}/evaluate-answers`,
             {
-                job_role: session.jobRole,
-                difficulty: session.difficulty,
-                interview_type: session.interviewType,
-                qa_pairs: session.answers,
+                job_role: interview.jobRole,
+                difficulty: interview.difficulty,
+                interview_type: interview.interviewType,
+                qa_pairs: answers, 
             }
         );
 
-        session.evaluations =
-            data.evaluations;
-
-        session.report = {
+        interview.report = {
             overallScore: data.overall_score,
+            evaluations: data.evaluations,
             strengths: data.strengths,
             weaknesses: data.weaknesses,
             suggestions: data.suggestions,
             summary: data.summary,
         };
-
-        session.status = "completed";
-
-        await session.save();
+        interview.status = "completed";
+        await interview.save();
 
         return res.json({
-
             success: true,
-
-            report: session.report,
-
-            evaluations: session.evaluations,
+            report: interview.report,
         });
 
     } catch (error) {
-
-        console.error(
-            "finishInterview error:",
-            error.message
-        );
-
-        return res.status(500).json({
-            message: error.message
-        });
+        console.error("finishInterview error:", error.message);
+        throw new ApiError(500, "Failed to finish interview");
     }
 };
 
-
 export const getHistory = async (req, res) => {
-
     try {
+        const userId = "test-user"; 
 
-        const userId = "test-user";
-
-        const sessions =
-            await interviewModel.find(
-                {
-                    userId,
-                    status: "completed",
-                },
-                {
-                    jobRole: 1,
-                    difficulty: 1,
-                    interviewType: 1,
-                    report: 1,
-                    createdAt: 1,
-                }
-            ).sort({
-                createdAt: -1,
-            });
+        const sessions = await Interview.find(
+            { userId, status: "completed" },
+            {
+                jobRole: 1,
+                difficulty: 1,
+                interviewType: 1,
+                report: 1,
+                createdAt: 1,
+            }
+        ).sort({ createdAt: -1 });
 
         return res.json(sessions);
 
     } catch (error) {
-
-        console.error(
-            "getHistory error:",
-            error.message
-        );
-
-        return res.status(500).json({
-            message: error.message
-        });
-    }
-};
-
-
-export const getReport = async (req, res) => {
-
-    try {
-
-        const session =
-            await interviewModel.findById(
-                req.params.sessionId
-            );
-
-        if (!session) {
-            return res.status(404).json({
-                message: "Session not found"
-            });
-        }
-
-        return res.json(session);
-
-    } catch (error) {
-
-        console.error(
-            "getReport error:",
-            error.message
-        );
-
-        return res.status(500).json({
-            message: error.message
-        });
+        console.error("getHistory error:", error.message);
+        throw new ApiError(500, "Failed to get history");
     }
 };

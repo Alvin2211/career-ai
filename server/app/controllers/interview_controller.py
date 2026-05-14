@@ -26,7 +26,7 @@ def handle_generate_interview(
     )
 
     raw = call_llm(system, human)
-
+    print("Raw LLM response:", raw)
     data = json.loads(raw)
 
     return GenerateInterviewResponse(**data)

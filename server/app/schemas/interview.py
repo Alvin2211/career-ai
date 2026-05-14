@@ -1,44 +1,41 @@
 from pydantic import BaseModel
 from typing import List
 
-
-class InterviewQuestion(BaseModel):
-    question: str
-    expected_answer: str
-    rubric: str
-
-
-class GenerateInterviewRequest(BaseModel):
+class GenerateQuestionsRequest(BaseModel):
     job_role: str
     difficulty: str
     interview_type: str
     total_questions: int = 5
 
 
-class GenerateInterviewResponse(BaseModel):
-    questions: List[InterviewQuestion]
+class QuestionItem(BaseModel):
+    question: str
 
 
-class CandidateAnswer(BaseModel):
+class GenerateQuestionsResponse(BaseModel):
+    questions: List[QuestionItem]
+
+
+class QAPair(BaseModel):
     question: str
     answer: str
 
 
-class EvaluateInterviewRequest(BaseModel):
+class EvaluateAnswersRequest(BaseModel):
     job_role: str
     difficulty: str
     interview_type: str
-    qa_pairs: List[CandidateAnswer]
+    qa_pairs: List[QAPair]
 
 
 class QuestionEvaluation(BaseModel):
     question: str
-    score: int
+    score: int       
     feedback: str
 
 
-class EvaluateInterviewResponse(BaseModel):
-    overall_score: float
+class EvaluateAnswersResponse(BaseModel):
+    overall_score: float           
     evaluations: List[QuestionEvaluation]
     strengths: List[str]
     weaknesses: List[str]

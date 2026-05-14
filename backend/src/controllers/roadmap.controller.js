@@ -15,7 +15,6 @@ const getRoadmap = async(req,res)=>{
         });
 
         if(!response.data) throw new ApiError(500,"No data received from course service, please try later :)"); 
-        console.log("Roadmap data received:", response.data);
         res.status(200).json({
             success: true,
             data: response.data
