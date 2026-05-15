@@ -45,7 +45,7 @@ function SidebarCard({ session }) {
 
 export default function Sidebar({ history, loading }) {
   return (
-    <aside className="w-65 min-w-65 bg-[#0d0d0d] border-r border-zinc-800 flex flex-col h-full overflow-y-auto">
+    <aside className="w-65 min-w-65 bg-[#0d0d0d] border-r border-zinc-800 flex flex-col min-h-screen overflow-y-auto">
       <div className="px-5 pt-6 pb-4 border-b border-zinc-800">
         <p className="text-[10px] text-neutral-200 uppercase tracking-widest mb-1">Past Sessions</p>
         <p className="text-neutral-200 text-xs">Your interview history</p>

@@ -1,9 +1,10 @@
 import { ApiError } from "../utils/ApiError.js";
 import axios from "axios";
+import { getAuth } from "@clerk/express";
 
 const getcourses= async (req,res) => {
     try {
-        const userId = req.auth?.userId;    
+        const {userId} = getAuth(req);    
         if (!userId) throw new ApiError(400, "mot authenticated");
 
         const {query} = req.query;

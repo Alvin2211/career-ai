@@ -1,5 +1,6 @@
 //isme db connect krke  then app import krke  listen krenge
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config();
 import { connectDB } from "./db/index.js";
 import { app } from "./app.js";
 

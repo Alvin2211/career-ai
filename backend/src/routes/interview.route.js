@@ -3,9 +3,9 @@ import {startInterview, finishInterview, getHistory} from "../controllers/interv
 import {interviewLimiter} from "../middlewares/rateLimiter.js";
 
 const router = Router();
+router.route("/start").post( interviewLimiter, startInterview);
+router.route("/finish").post( interviewLimiter, finishInterview);
+router.route("/history").get( getHistory);
 
-router.post("/start", interviewLimiter, startInterview);
-router.post("/finish", interviewLimiter,  finishInterview);
-router.get("/history", getHistory);
 
 export default router;

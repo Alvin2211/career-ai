@@ -1,77 +1,174 @@
 # CareerAI
 
-An AI-powered career guidance web application that helps users discover suitable career paths, generate professional resumes, and navigate their professional growth. The platform is currently in active development with more features rolling out soon.
+An AI-powered career guidance platform that helps users analyze resumes, discover personalized learning paths, and practice AI-driven mock interviews — all in one place.
 
 ---
 
-## Overview
-
-CareerAI combines a React frontend, a Node.js/Express backend, and a dedicated Python microservice to deliver intelligent, resume-aware career recommendations. Authentication is handled entirely through Clerk, enabling a seamless and secure user experience without managing credentials manually.
-
----
-
+## Demo
+<div>
+    <a href="https://www.loom.com/share/db48d3f9de8c43fc861935b3d82db8ea">
+    </a>
+    <a href="https://www.loom.com/share/db48d3f9de8c43fc861935b3d82db8ea">
+      <img src="https://cdn.loom.com/sessions/thumbnails/db48d3f9de8c43fc861935b3d82db8ea-91efb00c17290c4e-full-play.gif#t=0.1" width="400">
+    </a>
+  </div>
+  
 ## Project Snippets
-
-<img src="screenshots/landing.png" width="700"/>
-<img src="screenshots/career-recommender-upload.png" width="700"/>
-<img src="screenshots/career-results.png" width="700"/>
-<img src="screenshots/resumeforge-personal.png" width="700"/>
-<img src="screenshots/resumeforge-skills.png" width="700"/>
-<img src="screenshots/resume-output.png" width="700"/>
+  <img src="screenshots/landingpage.png" width="45%"/><img src="screenshots/careerrecomend.png" width="45%"/>
+  <img src="screenshots/courses.png" width="45%"/><img src="screenshots/roadmap.png" width="45%"/>
+  <img src="screenshots/mockinterview.png" width="45%"/><img src="screenshots/resumes.png" width="45%"/>
 
 ---
 
 ## Features
 
-### Career Recommender
-Users upload their resume (PDF or DOCX) and the Python microservice parses it, analyzes the content, and uses an LLM to suggest suitable career paths along with required skills, global demand insights, and related job roles.
+### 🔍 Resume Analysis & Insights
+Upload your resume (PDF) and let the AI analyze your skills, experience, and career profile to recommend suitable career paths, required skills, and industry trends.
 
-### ResumeForge
-A multi-step resume builder that walks users through Personal Information, Experience, Education, Projects, and Skills. On completion, the Node.js backend uses Puppeteer to render and export a polished, download-ready PDF resume.
+### 📚 Course Recommender
+Get curated course recommendations aligned with your career goals and skill gaps using vector search and AI-powered matching.
 
-### AI Chat *(in development)*
-A conversational AI assistant for career-related queries and guidance.
+### 🗺️ Roadmap Generator
+Generate personalized step-by-step learning roadmaps tailored to your target role and current experience level.
 
-### Roadmap Generator *(in development)*
-Personalized step-by-step learning and career roadmaps based on the user's target role.
-
-### Course Recommender *(in development)*
-Curated course suggestions aligned with identified skill gaps and career goals.
+### 🎙️ AI Mock Interview
+Practice interviews with AI-generated questions across multiple domains and receive detailed feedback, strengths, weaknesses, and improvement suggestions.
 
 ---
 
 ## Tech Stack
 
-**Frontend** — React, Vite, React Router, Tailwind CSS, Clerk
-
-**Backend (Node.js)** — Node.js, Express, MongoDB, Puppeteer, Clerk SDK
-
-**Backend (Python Microservice)** — FastAPI, LangChain, LangGraph, Groq LLM, PyMuPDF, Uvicorn
+| Layer | Technologies |
+|---|---|
+| Frontend | React, Vite, React Router, Tailwind CSS, Clerk |
+| Backend (Node.js) | Node.js, Express.js, MongoDB, Clerk SDK |
+| Backend (Python) | FastAPI, LangChain, LangGraph, Groq and Gemini LLM, ChromaDB|
 
 ---
 
 ## Architecture
 
-```
+```text
 career-ai/
 ├── frontend/              # React + Vite application
 ├── backend/               # Node.js + Express API server
 │   └── src/
+│       ├── controllers/
+│       ├── routes/
+│       ├── models/
 │       └── server.js
-└── server/                # FastAPI microservice for AI processing
+└── server/                # FastAPI Python microservice
+    ├── app/
     └── requirements.txt
+
 ```
 
-The frontend communicates with the Node.js backend for authentication and resume generation. Career recommendation requests are routed from the Node.js service to the Python microservice, which handles resume parsing and LLM inference via LangChain and Groq.
+The frontend communicates with the Node.js backend for authentication, interview session management, and data persistence.
+
+Career recommendation, course suggestions, roadmap generation, and interview question/evaluation requests are routed to the FastAPI microservice, which handles resume parsing and LLM inference using LangChain and Groq.
 
 ---
 
-## Status
+## Getting Started
 
-The Career Recommender and ResumeForge features are fully functional. The AI Chat, Roadmap Generator, and Course Recommender are currently under development and will be available in an upcoming release.
+### Prerequisites
+
+- Node.js v18+
+- Python 3.10+
+- MongoDB instance (Local or Atlas)
+- Clerk account
+- Groq API key
+
+---
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/career-ai.git
+cd career-ai
+```
+
+---
+
+### 2. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+Create a `.env` file inside `/frontend`:
+
+```env
+VITE_API_BASE_URL=
+VITE_CLERK_PUBLISHABLE_KEY=
+```
+
+Run the frontend:
+
+```bash
+npm run dev
+```
+
+---
+
+### 3. Backend Setup (Node.js)
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file inside `/backend`:
+
+```env
+PORT=5000
+MONGODB_URI=
+CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+PYTHON_SERVICE_URL=
+```
+
+Run the backend:
+
+```bash
+npm run dev
+```
+
+---
+
+### 4. Python Microservice Setup
+
+```bash
+cd server
+pip install -r requirements.txt
+```
+
+Create a `.env` file inside `/server`:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+```
+
+Run the FastAPI server:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+---
+
+
+## Future Improvements
+
+- Voice-based mock interviews
+- AI career mentor chatbot
+- Job trend analytics dashboard
 
 ---
 
 ## License
 
-ISC
+ISC License

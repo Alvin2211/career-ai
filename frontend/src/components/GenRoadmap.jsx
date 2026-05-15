@@ -101,7 +101,7 @@ const GenRoadmap = () => {
       {loading && (
         <div className="flex flex-col gap-10 items-center justify-center min-h-[50vh] z-10">
           <LoaderOne />
-          <p className="text-white mt-3 text-sm">Fetching Courses...</p>
+          <p className="text-white mt-3 text-sm">Generating Roadmap...</p>
         </div>
       )}
 

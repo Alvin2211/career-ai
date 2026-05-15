@@ -3,10 +3,11 @@ import axios from "axios";
 import fs from "fs";
 import FormData from "form-data";
 import { Resume } from "../models/resume.model.js";
+import { getAuth } from "@clerk/express";
 
 const parseResume = async (req, res,) => {
     try {
-        const userId = req.auth?.userId;
+        const {userId} = getAuth(req);
         if (!userId) throw new ApiError(400, "not authenticated");
 
         if (!req.file) throw new ApiError(400, "No file uploaded");

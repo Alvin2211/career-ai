@@ -1,9 +1,9 @@
 // app related sab isme hoga and then isse server.js me import krenge and usko listen krwayenge 
 import express from 'express';
-import dotenv from 'dotenv';
-dotenv.config(); 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { clerkMiddleware } from '@clerk/express';
+
 
 const app =express();
 
@@ -15,10 +15,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
+app.use(clerkMiddleware()); 
+
 
 app.get("/", (req, res) => {
   res.send("CareerAI backend is running");
 });
+
 
 import resumeRoutes from './routes/resume.route.js'
 

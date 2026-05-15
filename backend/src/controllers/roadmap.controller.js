@@ -1,10 +1,11 @@
 import { ApiError } from "../utils/ApiError.js";
 import axios from "axios";
+import { getAuth } from "@clerk/express";
 
 const getRoadmap = async(req,res)=>{
  
     try {
-        const userId = req.auth?.userId;    
+        const {userId} = getAuth(req);    
         if (!userId) throw new ApiError(400, "not authenticated");
 
         const {query} = req.query;
