@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("CareerAI backend is running");
+});
+
 import resumeRoutes from './routes/resume.route.js'
 
 app.use('/api',resumeRoutes);
