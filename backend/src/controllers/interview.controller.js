@@ -5,6 +5,7 @@ const TOTAL_QUESTIONS = 5;
 
 export const startInterview = async (req, res) => {
     try {
+        const userId = req.auth?.userId;
         const { jobRole, difficulty, interviewType } = req.body;
 
         if (!jobRole || !difficulty || !interviewType) {
@@ -23,7 +24,7 @@ export const startInterview = async (req, res) => {
 
         
         const interview = await Interview.create({
-            userId: "test-user", 
+            userId: userId,
             jobRole,
             difficulty,
             interviewType,
@@ -98,7 +99,7 @@ export const finishInterview = async (req, res) => {
 
 export const getHistory = async (req, res) => {
     try {
-        const userId = "test-user"; 
+        const userId = req.auth?.userId;
 
         const sessions = await Interview.find(
             { userId, status: "completed" },
